@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jornada </title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 50px;
+      background-image: url('mapa.jpg'); /* Replace 'old_map.jpg' with the actual path to your background image */
+      background-size: cover;
+      color: #000000;
+      position: relative;
+          }
+
+        .nome{
+            text-align: end;
+        }
+    h1 {
+      color: #000000;
+      position: relative;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    label {
+      font-size: 16px;
+      color: #000000;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      margin-right: 10px;
+      border: 1px solid #666;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+      color: #000000;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: rgba(102, 102, 102, 0.8); /* Semi-transparent dark grey */
+      color: #fff;
+      border: none;
+    }
+    button:hover{
+        opacity: 70%;
+    }
+
+    button.zerar {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #8b0000; /* Dark Red */
+      color: #fff;
+      border: none;
+    }
+
+    #total {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #000000;
+      background-color: white;
+    }
+
+    #progress-bar-container {
+      margin-top: 20px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: rgba(150, 147, 147, 0.5); /* Semi-transparent white */
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background-color: #152915; /* Green */
+      transition: width 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="numberForm">
+    <label for="userNumber">Quanto caminhou (km)?</label>
+    <input type="number" id="userNumber" required>
+    <button type="button" onclick="storeAndShowTotal()">Adicionar</button>
+  </form>
+
+  <div id="total">Distância percorrida: 0 km</div>
+
+  <button class="zerar" type="button" onclick="resetTotal()">Zerar progresso</button>
+
+  <div id="progress-bar-container">
+    <div id="progress-bar">
+      <div id="progress-fill"></div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize total variable with the value from cookies, default to 0 if not found
+    var total = parseFloat(getCookie("total")) || 0;
+    var totalDistance = 2860; // The total distance
+
+    // Display the initial total on the page
+    document.getElementById('total').innerText = 'Já foram ' + total + ' km, faltam ' + (2860 - total) + ' km.';
+
+    // Update the progress bar
+    updateProgressBar(total);
+
+    function storeAndShowTotal() {
+      // Get the input value
+      var userInput = document.getElementById('userNumber').value;
+
+      // Check if the input is a valid number
+      if (!isNaN(userInput)) {
+        // Parse the input as a number
+        var numberToAdd = parseFloat(userInput);
+
+        // Add the number to the total
+        total += numberToAdd;
+
+        // Store the updated total in browser cookies
+        setCookie("total", total);
+
+        // Display the updated total on the page
+        document.getElementById('total').innerText = 'Distância percorrida: ' + total + ' km';
+
+        // Update the progress bar
+        updateProgressBar(total);
+
+        // Clear the input field
+        document.getElementById('userNumber').value = '';
+
+        // Optional: Display a message
+      } else {
+        alert('Please enter a valid number!');
+      }
+    }
+
+    function resetTotal() {
+      // Reset total to 0
+      total = 0;
+
+      // Clear the cookie
+      setCookie("total", total);
+
+      // Update the displayed total on the page
+      document.getElementById('total').innerText = 'Distância percorrida: ' + total + ' km';
+
+      // Update the progress bar
+      updateProgressBar(total);
+
+      // Optional: Display a message
+      confirm('Tem certeza que quer zerar o progresso? A ação não poderá ser desfeita.');
+    }
+
+    // Function to set a cookie
+    function setCookie(name, value) {
+      document.cookie = name + "=" + value + "; path=/";
+    }
+
+    // Function to get the value of a cookie
+    function getCookie(name) {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.startsWith(name + '=')) {
+          return cookie.substring(name.length + 1);
+        }
+      }
+      return null;
+    }
+
+    // Function to update the progress bar
+    function updateProgressBar(currentTotal) {
+      var progress = (currentTotal / totalDistance) * 100;
+      document.getElementById('progress-fill').style.width = progress + '%';
+    }
+  </script>
+
+</body>
+</html>
